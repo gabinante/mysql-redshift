@@ -1,0 +1,7 @@
+.accesskey
+.secretkey
+.redshiftpass
+.my.cnf
+*.log
+*.txt
+.DS_Store
