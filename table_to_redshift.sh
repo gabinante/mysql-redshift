@@ -1,24 +1,33 @@
 #!/bin/bash
 
-# in the future, going to add colors for xargs so you can tell your threads apart. This array is some groundwork.
-# #RED
-# arr[0]=$(tput setaf 1)
-# #GREEN
-# arr[1]=$(tput setaf 2)
-# #YELLOW
-# arr[2]=$(tput setaf 3)
-# #LIME_YELLOW
-# arr[3]=$(tput setaf 190)
-# #BLUE
-# arr[4]=$(tput setaf 4)
-# #POWDER_BLUE
-# arr[5]=$(tput setaf 153)
-# #MAGENTA
-# arr[6]=$(tput setaf 5)
-# #CYAN
-# arr[7]=$(tput setaf 6)
-# #WHITE
-# arr[8]=$(tput setaf 7)
+# This adds colors for xargs so you can tell your threads apart.
+#RED
+arr[0]="tput setaf 1"
+#GREEN
+arr[1]="tput setaf 2"
+#YELLOW
+arr[2]="tput setaf 3"
+#LIME_YELLOW
+arr[3]="tput setaf 190"
+#BLUE
+arr[4]="tput setaf 4"
+#POWDER_BLUE
+arr[5]="tput setaf 153"
+#MAGENTA
+arr[6]="tput setaf 5"
+#CYAN
+arr[7]="tput setaf 6"
+#WHITE
+arr[8]="tput setaf 7"
+
+for (( i = 0; i < ${#arr[@]} ; i++ )); do
+  if mkdir /tmp/arr$i-lock 2> /dev/null; then
+    eval ${arr[$i]}
+    echo "color lock gained for xargs thread $i"
+    break
+  fi
+done
+
 
 mydir="/opt/mysql-redshift"
 total=0
@@ -170,4 +179,6 @@ ziptime=$(($s3start - $zipstart))
 exporttime=$(($zipstart - $starttime))
 echo "Complete load of $mytable took $fulltime seconds. Export to file took $exporttime seconds, zip took $ziptime seconds, load to s3 took $s3time seconds, and import to redshift from s3 took $importtime seconds."
 
+# Free up our color for use by another thread
+rm -r /tmp/arr$i-lock;
 exit
